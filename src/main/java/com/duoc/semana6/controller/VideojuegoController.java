@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.duoc.semana6.messaging.VideojuegoProducer;
 import com.duoc.semana6.model.Videojuego;
 import com.duoc.semana6.services.VideojuegoService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class VideojuegoController {
     
     private final VideojuegoService videojuegoService;
+    private final VideojuegoProducer kafkaProducer;
 
     @GetMapping()
     public ResponseEntity<List<Videojuego>> getAllVideojuego() {
@@ -26,14 +28,14 @@ public class VideojuegoController {
         return ResponseEntity.ok(videojuegos);
     }
     
-    @GetMapping("/id/{id}")
-    public ResponseEntity<Videojuego> getVideojuegoById(@PathVariable String id) {
-        Videojuego videojuego = videojuegoService.getVideojuegoById(id);
-        if(videojuego == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(videojuego);
-    }
+    // @GetMapping("/id/{id}")
+    // public ResponseEntity<Videojuego> getVideojuegoById(@PathVariable String id) {
+    //     Videojuego videojuego = videojuegoService.getVideojuegoById(id);
+    //     if(videojuego == null) {
+    //         return ResponseEntity.notFound().build();
+    //     }
+    //     return ResponseEntity.ok(videojuego);
+    // }
 
     @GetMapping("/titulo/{titulo}")
     public ResponseEntity<Videojuego> getVideojuegoByTitulo(@PathVariable String titulo) {
@@ -52,5 +54,17 @@ public class VideojuegoController {
         }
         return ResponseEntity.ok(videojuego);
     }
+
+    @GetMapping("/id/{id}")
+    public ResponseEntity<Videojuego> getVideojuegoById(@PathVariable String id) {
+        Videojuego videojuego = videojuegoService.getVideojuegoById(id);
+        if(videojuego == null) {
+            return ResponseEntity.notFound().build();
+        }
+        // enviar evento a Kafka
+        kafkaProducer.send("videojuego-consultas", "Se consultó el juego con id: " + id);
+        return ResponseEntity.ok(videojuego);
+    }
+
 
 }

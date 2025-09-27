@@ -1,16 +1,24 @@
 # Semana6 - Microservicio de Videojuegos
 
 ## Objetivo
-Este proyecto es un **microservicio REST** desarrollado en **Spring Boot 3** que permite gestionar información sobre videojuegos. Su finalidad es exponer endpoints para consultar videojuegos por diferentes criterios como ID, título o plataforma.
+Este proyecto es un **microservicio REST** desarrollado en **Spring Boot 3** que permite gestionar información sobre videojuegos. Su finalidad es exponer endpoints para consultar videojuegos por diferentes criterios como ID, título o plataforma.  
+
+El microservicio está preparado para funcionar en un **ecosistema de microservicios**, integrando:
+
+- **Eureka Server**: Para el registro y descubrimiento de servicios.
+- **Config Server**: Para centralizar la configuración de los microservicios.
+- **Kafka**: Para publicar y consumir eventos relacionados con videojuegos, como actualizaciones o registros de nuevos títulos.
 
 ---
 
 ## Funcionalidades principales
 
 - Obtener todos los videojuegos disponibles.
-- Obtener un videojuego por su **ID**.
-- Obtener un videojuego por su **título**.
-- Obtener un videojuego por su **plataforma**.
+- Obtener un videojuego por **ID**.
+- Obtener un videojuego por **título**.
+- Obtener un videojuego por **plataforma**.
+- Publicar eventos en **Kafka** al crear o actualizar un videojuego.
+- Escuchar eventos de otros microservicios a través de **Kafka**.
 
 Todos los endpoints devuelven respuestas HTTP adecuadas: `200 OK` cuando hay resultados, `204 No Content` si no hay datos y `404 Not Found` cuando no se encuentra un registro específico.
 
@@ -27,13 +35,20 @@ Todos los endpoints devuelven respuestas HTTP adecuadas: `200 OK` cuando hay res
 
 ---
 
+## Kafka
+
+El microservicio está integrado con **Apache Kafka** para el manejo de eventos:
+
+- **Productor:** Publica eventos cuando se crea o actualiza un videojuego.
+- **Consumidor:** Escucha eventos provenientes de otros microservicios.
+
+---
+
 ## Seguridad
 Este microservicio utiliza **Basic Auth**. Las credenciales por defecto para acceder a los endpoints son:
 
 - **Usuario:** `user`
 - **Contraseña:** `password`
-
-> Asegúrate de enviar las credenciales en tu cliente HTTP (Postman, curl, etc.) para obtener respuesta.
 
 ---
 
@@ -43,8 +58,9 @@ Este microservicio utiliza **Basic Auth**. Las credenciales por defecto para acc
 - Maven
 - Spring Boot 3
 - H2 Database (para pruebas locales)
-- Eureka Server (opcional, si se integra con microservicios)
-- Config Server (opcional, para propiedades centralizadas)
+- **Eureka Server** (para registro y descubrimiento de microservicios)
+- **Config Server** (para propiedades centralizadas)
+- Apache Kafka (broker y topics configurados)
 
 ---
 
